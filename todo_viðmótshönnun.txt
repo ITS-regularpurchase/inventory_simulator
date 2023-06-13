@@ -1,0 +1,4 @@
+1. Teikna upp hlut sem tekur inn inv sim result og skilar
+a.  grafi með inventory sim niðurstöðum
+b.  teiknar upp histogram
+
