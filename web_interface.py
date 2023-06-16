@@ -30,7 +30,7 @@ st.set_page_config(
 )
 
 def check_password():
-    """Returns true if user had the correct password."""
+    """Returns true if user has the correct password."""
     def password_entered():
         """Checks whether a password entered by the user is correct."""
         if st.session_state["password"] == "RHINO123":
@@ -60,7 +60,7 @@ if check_password():
     with st.expander("Comments"):
         st.markdown('gagnauppfærsla:  keyra þarf skrána get_data_from_its.py')
         st.markdown('Þetta er skirfað á fundi 8. jún til að sýn Írenu og Hlyn hvað þetta er allt saman sniðugt')
-        st.markdown('15/06/23 - uppfært: pagetitle, pageicon og bætt við leitarboxi - íHT')
+        st.markdown('15/06/23 - uppfært: pagetitle, pageicon. Bætti við leitarboxi og aðgangsorði - ÍHT')
 
 
     st.title('Inventory Simulator Demo')
