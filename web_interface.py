@@ -1,4 +1,5 @@
 import streamlit as st
+pip install streamlit-aggrid
 #import streamlit_authenticator as stauth
 from st_aggrid import AgGrid, GridOptionsBuilder
 import inventory_opt_and_forecasting_package as inv
