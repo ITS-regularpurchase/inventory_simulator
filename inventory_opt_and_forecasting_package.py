@@ -317,7 +317,8 @@ if __name__ == '__main__':
         print('siggi'+ str(index))
 
     print(sim_rio_items)
-    print(a.simulator_input_his[:1])
+    print(a.sim_result)
+    a.simulator_input_his.to_csv('test.csv')
 
 
 
