@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit_authenticator as stauth
+#import streamlit_authenticator as stauth
 from st_aggrid import AgGrid, GridOptionsBuilder
 import inventory_opt_and_forecasting_package as inv
 import pandas as pd
