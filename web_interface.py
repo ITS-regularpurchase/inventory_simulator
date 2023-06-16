@@ -70,14 +70,15 @@ if check_password():
         st.success(f"Síðasta uppfærsla "+str(now))
 
     builder = GridOptionsBuilder.from_dataframe(rio_items)
-    builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
+    #builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
+    builder.configure_pagination(enabled=False, paginationPageSize=15)
     builder.configure_selection('single')
     go = builder.build()
 
     with st.expander("Part number grid"):
         search_term = st.text_input('Enter Partnumber')
         filtered_grid = rio_items[rio_items['pn'].str.contains(search_term,case=False)]
-        grid_return = AgGrid(filtered_grid,go,height=400) 
+        grid_return = AgGrid(filtered_grid,go, height=500) 
         #grid_return = AgGrid(rio_items, go)
 
     selected_rows = grid_return['selected_rows']
