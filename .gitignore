@@ -1,3 +1,7 @@
+# Icelandair Custom ignore:
+secrets.toml
+
+
 # Created by https://www.toptal.com/developers/gitignore/api/database,python,visualstudiocode,macos,windows
 # Edit at https://www.toptal.com/developers/gitignore?templates=database,python,visualstudiocode,macos,windows
 
