@@ -2,3 +2,80 @@
 a.  grafi með inventory sim niðurstöðum
 b.  teiknar upp histogram
 
+
+
+# Frá Streamlit.docx:
+
+Markmið
+    •	Öll gögn á einum stað
+    •	Einfalda vinnuferla
+
+Hvað viljum sjá?
+    •	Stocking item – YES / NO
+    •	Qty on order
+    •	Min-Max stock level
+    •	Láta „actual stock“ dálk verða rauðan ef magn er komið undir minimum stock level og kannski grænan ef við erum yfir max stock level
+    •	Láta actual stock dálk verða rauðan ef við erum nil stock
+    •	Alternate part number
+    •	Last purchase part
+    •	Last purchase date
+        o	Hversu oft part númer er pantað yfir árið (væri hægt að fækka sendingum?)
+    •	Price lists frá birgjum
+    •	Fjárhagur
+        o	Hvað við kaupum inn mánuð fyrir mánuð á stockinn
+            	Hvað keyptum við fyrir mikinn pening hvern mánuð?
+        o	Sjá í súluriti price á partnúmeri og sjá þróunina á verðinu. 
+
+    Hvað viljum við geta gert?
+    •	Fá innkaupatillögu inn í streamlit og kerfið create-ar P0.
+    •	Geta hlaðið inn price listum frá vendorum.
+
+
+
+
+# Frá Power BI.docx:
+
+Þar sem að spurningar varðandi birgðastöðu leiða oft í ljós að birgðir eru réttar en upplifun notanda að þær séu rangar af ýmsum ástæðum þá er spurning um að við tökum fund í vikunni og hönnum Power BI skýrslu sem byggir á þeirri sem er til og geta á sem auðveldastan hátt sannreynt gögn.
+Markmið
+    •	Skýrsla til að sannreyna gögn
+    •	Öll gögn á einum stað
+
+Forsendur
+    •	Hvar er verið að ná í upplýsingar til að athuga hvort að gögn séu rétt og getum við sett þau öll á einn stað?
+
+
+Hvað viljum við sjá?
+    1.	Standard part number
+    2.	Alternate part number
+        a.	T.d. þegar smellt er á part numer að þá komi gluggi sem sýnir öll alternate numer
+    3.	Last purchase part
+    4.	Description
+    5.	Stock units
+    6.	Qty on order
+    7.	US
+    8.	Reserved
+    9.	Location
+    10.	Er part number approved?
+    11.	Er part number obsolete?
+    12.	Er partur Repairable?
+    13.	MIN – MAX stock level
+    14.	Stocking item – YES / NO
+    15.	Fjárhagur
+        a.	Hvað við kaupum inn mánuð fyrir mánuð á stockinn
+            i.	Hvað keyptum við fyrir mikinn pening hvern mánuð?
+        b.	Sjá í súluriti price á partnúmeri og sjá þróunina á verðinu. 
+
+Annað
+    1.	P0 history líkt og í MXI
+        a.	P0	
+        b.	Type (Purchase, repair, exchange o.s.frv.)
+        c.	Status (Issued, partial, received, closed o.s.frv.)
+        d.	Vendor code og nafn	
+        e.	Contact (hver pantaði)
+        f.	External reference
+        g.	PN
+        h.	QTY
+        i.	Unit price
+        j.	Line Price
+        k.	Promised by date
+
