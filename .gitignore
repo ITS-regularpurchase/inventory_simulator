@@ -1,5 +1,6 @@
 # Icelandair Custom ignore:
 secrets.toml
+ENV_DIR
 
 # git log lifehack:
 # git log --pretty=format:"%h - %an, %ar : %s"
