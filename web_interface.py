@@ -66,14 +66,13 @@ def check_password():
 if __name__ =="__main__" or check_password():
     with st.sidebar:
         page = st.radio("",["Purchasing system", "Overview", "Rotable"], 0, )
-    
-    if page=="Purchasing system":
-        
         with st.expander("Comments"):
             st.markdown('gagnauppfærsla:  keyra þarf skrána get_data_from_its.py')
             st.markdown('Þetta er skirfað á fundi 8. jún til að sýn Írenu og Hlyn hvað þetta er allt saman sniðugt')
             st.markdown('15/06/23 - uppfært: pagetitle, pageicon. Bætti við leitarboxi og aðgangsorði - ÍHT')
 
+    
+    if page=="Purchasing system":
 
         st.title('Inventory Simulator Demo')
         if st.button('Update from MXI'):
