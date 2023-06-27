@@ -14,7 +14,7 @@ rio_items = inp_data.get_rio_items()
 rio_items = rio_items[['pn', 'description', 'actual_stock', 'del_time', 'buy_freq', 'purchasing_method']]
 
 
-## CONFIG:
+## INIT / CONFIG:
 @st.cache
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
@@ -59,7 +59,7 @@ def check_password():
         # Password correct.
         return True
     
-## CONFIG END    
+## INIT / CONFIG END    
     
 
 # MAIN LOOP:
