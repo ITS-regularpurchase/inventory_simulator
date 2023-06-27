@@ -211,5 +211,5 @@ if __name__ =="__main__" or check_password():
         st.title("Hér kemur birgðaþróun")
         
     if page=="Rotable":
-        st.title("Hér sjást rotable partar")
+        st.title("Hér sjást rotable partar!!")
 
