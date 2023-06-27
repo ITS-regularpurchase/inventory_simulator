@@ -1,5 +1,6 @@
 # Icelandair Custom ignore:
 secrets.toml
+.streamlit
 .streamlit/secrets.toml
 ENV_DIR
 
