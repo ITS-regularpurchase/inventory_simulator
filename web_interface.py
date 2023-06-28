@@ -63,7 +63,7 @@ def check_password():
     
 
 # MAIN LOOP:
-if __name__ =="__main__" or check_password():
+if check_password():
     with st.sidebar:
         page = st.radio("",["Purchasing system", "Overview", "Rotable"], 0, )
         with st.expander("Comments"):
