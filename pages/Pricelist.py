@@ -3,9 +3,10 @@ import pandas as pd
 import numpy as np
 from verdlisti_df import verdlisti
 import time
+from authentication import check_password
 
 
-def main():
+if check_password():
     st.title('Verðlisti - Icelandair :airplane:')
     current_time = time.strftime("%H:%M:%S")
     st.write(current_time)
@@ -58,8 +59,3 @@ def main():
     st.write('---')
     st.caption("*Icelandair Technical Services*")
     
-
-
-
-if __name__ == '__main__':
-    main()
