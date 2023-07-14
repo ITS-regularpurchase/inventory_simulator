@@ -12,7 +12,7 @@ import streamlit as st
 
 
 class forecasts:
-    def __init__(self, timarod, periods, number_of_trials, serv_lev):
+    def __init__(self, timarod, periods, number_of_trials, serv_lev) -> None:
         self.histogram = self.monte_forecast(timarod, periods, number_of_trials)
         self.serv_level_value = self.serv_lev_value(self.histogram, serv_lev)
         self.df_single_forecast = self.single_forecast(timarod, periods)

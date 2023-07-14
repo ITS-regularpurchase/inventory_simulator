@@ -8,7 +8,7 @@ class verdlisti():
         self.df = pd.read_csv('data/verdlisti.csv', sep=';')
         
         
-    def change_currency(self, currency) -> pd.DataFrame:
+    def change_currency(self, currency: str) -> pd.DataFrame:
         """Changes the currency of all prices in dataframe"""
         exchange_rate = {'ISK': 140, 'USD': 1.0723, 'EUR': 0.94}
         
@@ -23,7 +23,7 @@ class verdlisti():
         self.df = self.df.sort_values(by='Price', ascending=False).head(int(amount))
         return self.df
     
-    def show_only(self, vendor):
+    def show_only(self, vendor) -> pd.DataFrame:
         """Shows only selected vendor"""
         if vendor != 'All':
             self.df = self.df[self.df['Vendor'] == vendor]
