@@ -16,14 +16,13 @@ if check_password():
     st.sidebar.write('---')
     vendor_choice = st.sidebar.selectbox('**Veldu birgja**', options=['All'] + [vendor for vendor in verdlisti().df['Vendor'].unique()], index=0, key='vendor')
     
-
-    @st.cache_data
+    @st.cache_data(show_spinner="Sæki verðlista...")
     def load_data():
         df = verdlisti()
         return df
 
-    
     pl = load_data()
+    st.success('Verðlisti sóttur!')
 
     if top_ten:
         # TODO: fix this
