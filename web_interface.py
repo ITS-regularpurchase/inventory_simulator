@@ -16,7 +16,7 @@ rio_items = rio_items[['pn', 'description', 'actual_stock', 'del_time', 'buy_fre
 
 
 ## INIT / CONFIG:
-@st.cache
+@st.cache_data(show_spinner=False)
 def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv(index=False).encode('utf-8')
@@ -44,16 +44,16 @@ st.set_page_config(
 if check_password():
     with st.sidebar:
         with st.expander("Comments"):
-            st.markdown('gagnauppfærsla:  keyra þarf skrána get_data_from_its.py')
-            st.markdown('Þetta er skirfað á fundi 8. jún til að sýn Írenu og Hlyn hvað þetta er allt saman sniðugt')
+            st.markdown('gagnauppfærsla: keyra þarf skrána get_data_from_its.py')
+            st.markdown('Þetta er skrifað á fundi 8. júní til að sýna Írenu og Hlyn hvað þetta er allt saman sniðugt')
             st.markdown('15/06/23 - uppfært: pagetitle, pageicon. Bætti við leitarboxi og aðgangsorði - ÍHT')
 
 
     st.title('Inventory Simulator Demo')
     if st.button('Update from MXI'):
-        now = datetime.datetime.now()
+        timestamp = datetime.datetime.now().isoformat(' ', timespec='minutes')
         get_data_from_its.test()
-        st.success(f"Síðasta uppfærsla "+str(now))
+        st.success(f"Síðasta uppfærsla "+str(timestamp))
 
     builder = GridOptionsBuilder.from_dataframe(rio_items)
     #builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
