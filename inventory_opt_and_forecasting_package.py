@@ -12,7 +12,7 @@ import streamlit as st
 
 
 class forecasts:
-    def __init__(self, timarod, periods, number_of_trials, serv_lev) -> None:
+    def __init__(self, timarod, periods, number_of_trials, serv_lev):
         self.histogram = self.monte_forecast(timarod, periods, number_of_trials)
         self.serv_level_value = self.serv_lev_value(self.histogram, serv_lev)
         self.df_single_forecast = self.single_forecast(timarod, periods)
@@ -64,6 +64,9 @@ class get_raw_data():
             columns={'consumption_date': 'day', 'qty': 'actual_sale', 'item_number': 'item_id'})
         sim_input_his['day'] = pd.to_datetime(sim_input_his['day'])
 
+        #make sure that there are no duplicates in item_id, day
+        sim_input_his = sim_input_his.groupby(['item_id', 'day']).agg({"actual_sale":"sum"}).reset_index()
+
         return sim_input_his
 
     def get_rio_items(self):
@@ -109,7 +112,8 @@ class get_raw_data():
         i = 0
 
         min_date = sim_input_his['day'].min()
-        max_date = sim_input_his['day'].max()
+        #max_date = sim_input_his['day'].max()
+        max_date = '2023-07-12'
 
         idx = pd.date_range(min_date, max_date)
 
@@ -191,7 +195,7 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
     def step_3_input_add_extra_params_to_sim_input(self, sim_rio_items, sim_input_his, number_of_trials, serv_level):
 
         curr_stock = sim_rio_items.loc[:, 'actual_stock'].values[0]
-        lead_time = sim_rio_items.loc[:, 'del_time'].values[0]
+        lead_time = min(365, sim_rio_items.loc[:, 'del_time'].values[0])
         order_freq = sim_rio_items.loc[:, 'buy_freq'].values[0]
         minmax_min = sim_rio_items.loc[:, 'min'].values[0]
         minmax_max = sim_rio_items.loc[:, 'max'].values[0]
@@ -308,17 +312,19 @@ if __name__ == '__main__':
     sim_rio_on_order = inp_data.create_on_order_test_data('Q4631')
     a = inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, 750, 5000, 0.97)
 
-    for index, row in inp_data.rio_items.head(5).iterrows():
-        sim_input_his = inp_data.create_rio_his_test_data(row['pn'])
-        sim_rio_items = inp_data.create_rio_items_test_data(row['pn'])
-        sim_rio_on_order = inp_data.create_on_order_test_data(row['pn'])
+    #for index, row in inp_data.rio_items.head(5).iterrows():
+      #  sim_input_his = inp_data.create_rio_his_test_data(row['pn'])
+       # sim_rio_items = inp_data.create_rio_items_test_data(row['pn'])
+       # sim_rio_on_order = inp_data.create_on_order_test_data(row['pn'])
 
-        a = inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, 750, 5000, 0.97)
-        print('siggi'+ str(index))
+      #  a = inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, 750, 5000, 0.97)
+      #  print('siggi'+ str(index))
 
-    print(sim_rio_items)
+    #print(sim_rio_items)
+    #print(a.simulator_input_his[:1])
+
+
+    print('-----------------------------------------------------------------------------------------------')
+    print('-----------------------------------------------------------------------------------------------')
     print(a.sim_result)
-    a.simulator_input_his.to_csv('test.csv')
-
-
-
+    print(a.as_is_info.columns)
