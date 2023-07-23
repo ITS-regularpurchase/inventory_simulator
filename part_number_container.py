@@ -6,14 +6,19 @@ import streamlit as st
 
 
 
+
 class inv_opt_container(sim.inventory_simulator_with_input_prep, sim.get_raw_data):
     def __init__(self, pn_list):
         self.rio_histories = self.get_rio_histories()
         self.rio_items = self.get_rio_items()
         self.rio_item_details = self.get_rio_item_details()
         self.rio_on_order = self.get_rio_on_order()
+
         self.final_res = self.run_purch_sugg_for_all_pn(pn_list)
         self.overview_opt_plan = self.calc_optimal_evoulouton_stock_value_and_serv_level()
+        self.container_as_is_info = self.container_as_is_info
+        self.as_is_container_for_grid = self.container_as_is_info
+
 
     def run_purch_sugg_for_all_pn(self, pn_list):
         final_res = pd.DataFrame()
@@ -22,22 +27,26 @@ class inv_opt_container(sim.inventory_simulator_with_input_prep, sim.get_raw_dat
             sim_input_his = self.create_rio_his_test_data(values)
             sim_rio_items = self.create_rio_items_test_data(values)
             sim_rio_on_order = self.create_on_order_test_data(values)
+            sim_rio_item_details = self.create_rio_item_details_test_data(values)
 
-            sim_object = sim.inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, 750,
+            sim_object = sim.inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, sim_rio_item_details, 750,
                                                                  1000, 0.95)
 
             if not final_res.empty:
                 final_res = pd.concat([final_res, sim_object.sim_result], ignore_index=True)
+                self.container_as_is_info  =  pd.concat([self.container_as_is_info, sim_object.as_is_info], ignore_index=True)
             else:
                 final_res = sim_object.sim_result
+                self.container_as_is_info = sim_object.as_is_info
+
 
         return final_res
 
     def calc_optimal_evoulouton_stock_value_and_serv_level(self):
-        detail = self.rio_item_details[['item_number', 'unit_cost', 'purchasing_method']]
+        detail = self.container_as_is_info[['pn', 'unit_cost', 'purchasing_method']]
         final_res = self.final_res[['item_id', 'inv', 'sim_date']]
 
-        inv_plan = final_res.merge(detail, how='inner', left_on='item_id', right_on='item_number')
+        inv_plan = final_res.merge(detail, how='inner', left_on='item_id', right_on='pn')
         inv_value = inv_plan.inv * inv_plan.unit_cost
         inv_plan['inv_value'] = inv_value
 
@@ -59,20 +68,20 @@ class inv_opt_container(sim.inventory_simulator_with_input_prep, sim.get_raw_dat
         return inv_plan_grouped
 
     def update_overview_opt_plan(self, filterd_list):
-        detail = self.rio_item_details[['item_number', 'unit_cost', 'purchasing_method']]
+        detail = self.container_as_is_info #[['pn', 'unit_cost', 'purchasing_method']]
         final_res = self.final_res[['item_id', 'inv', 'sim_date']]
 
-        detail_filter = detail['item_number'].isin(filterd_list)
+        detail_filter = detail['pn'].isin(filterd_list)
         final_res_filter = final_res['item_id'].isin(filterd_list)
 
         detail = detail[detail_filter]
         final_res = final_res[final_res_filter]
 
-        inv_plan = final_res.merge(detail, how='inner', left_on='item_id', right_on='item_number')
+        inv_plan = final_res.merge(detail, how='inner', left_on='item_id', right_on='pn')
         inv_value = inv_plan.inv * inv_plan.unit_cost
         inv_plan['inv_value'] = inv_value
 
-        inv_plan_grouped = inv_plan[['item_id', 'sim_date', 'inv_value']]
+        inv_plan = inv_plan[['item_id', 'sim_date', 'inv_value', 'inv']]
         inv_plan_grouped = inv_plan.groupby("sim_date", as_index=False).agg({"inv_value": "sum"})
 
         total_number_of_pn = inv_plan.groupby(["sim_date"], as_index=False).agg({"inv": "count"})
@@ -87,6 +96,14 @@ class inv_opt_container(sim.inventory_simulator_with_input_prep, sim.get_raw_dat
             'total_number_of_pn']
 
         self.overview_opt_plan = inv_plan_grouped
+
+    def filter_container_as_is_info(self, filterd_list):
+        self.as_is_container_for_grid  = self.container_as_is_info[self.container_as_is_info['pn'].isin(filterd_list)]
+
+
+
+
+
 
 
 class plotly_draw_inv_opt_plan:
@@ -120,7 +137,7 @@ class streamlit_inv_opt_container():
 
 if __name__ == '__main__':
     data = sim.get_raw_data()
-    pn_list = data.rio_items['pn'].head(100)
+    pn_list = data.rio_items['pn']
 
     to_filter = data.rio_items['pn'].head(50)
 
@@ -128,7 +145,12 @@ if __name__ == '__main__':
 
     print(alda.overview_opt_plan)
 
-    alda.update_overview_opt_plan(to_filter)
+    print(alda.update_overview_opt_plan(to_filter))
+
+    print(alda.container_as_is_info)
+
+    alda.container_as_is_info.to_excel("as_is_info.xlsx")
+   
 
 
 

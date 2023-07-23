@@ -96,7 +96,7 @@ if check_password():
         sim_rio_items.at[0, 'del_time'] = buy_freq
 
 
-        inv_sim = inv.inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, periods, number_of_trials, serv_level)
+        inv_sim = inv.inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, rio_item_details,  periods, number_of_trials, serv_level)
 
         with st.expander("PN Info"):
             col1, col2 , col3= st.columns(3)

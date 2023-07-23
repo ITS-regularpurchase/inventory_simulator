@@ -135,7 +135,7 @@ class get_raw_data():
         return new_sim_input_his
 
 class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
-    def __init__(self, sim_input_his, sim_rio_items, sim_rio_on_order, periods, number_of_trials, serv_level):
+    def __init__(self, sim_input_his, sim_rio_items, sim_rio_on_order, rio_item_details, periods, number_of_trials, serv_level):
         #upphafsgildi úr montercarlo spá fyrir buy freq og lead time
         self.histogram_lead = self.monte_forecast(sim_input_his[['actual_sale', 'day']], sim_rio_items.loc[:, 'del_time'].values[0], number_of_trials)
         self.serv_level_value_lead = self.serv_lev_value(self.histogram_lead, serv_level)
@@ -145,13 +145,14 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
         self.serv_level_value_buy = self.serv_lev_value(self.histogram_buy, serv_level)
         self.histo_with_cum_buy = self.histogram_with_cum(self.histogram_buy, 20)
 
+
         #Input í simulator
         self.simulator_input_his = self.step_5_crate_input_data_frame(sim_input_his, periods, sim_rio_items,
                                                                       sim_rio_on_order, number_of_trials,
                                                                       serv_level)
         #Output úr simulator
         self.sim_result = self.simulator_final_result()
-        self.as_is_info = self.data_collection_in_dataframe_for_constructor(sim_rio_items)
+        self.as_is_info = self.data_collection_in_dataframe_for_constructor(sim_rio_items, rio_item_details)
 
 
     def calc_lead_and_buy_with_save(self,inv_sim_his, periods, number_of_trials, serv_level):
@@ -239,7 +240,7 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
             dict_item_info['bakcorder'] = backorder
             dict_item_info['safety_stock'] = safety_stock
             dict_item_info['bypass_forecast'] = bypass_forecast
-            dict_item_info['use_minmax'] = safety_stock
+            dict_item_info['use_minmax'] = 1
             dict_item_info['minmax_min'] = minmax_min
             dict_item_info['minmax_max'] = minmax_max
 
@@ -271,7 +272,24 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
 
         return sim_input_his_5[['index', 'item_id', 'day','forecast','actual_sale', 'order_day', 'delivery', 'extra_params']]
 
-    def data_collection_in_dataframe_for_constructor(self, sim_rio_items):
+    def optimal_stock_level(self, sim_result, sim_rio_items):
+        length = len(sim_result)
+        lead_time = sim_rio_items['del_time'].values[0]
+        length_of_opt_period = int(length * 0.1)
+
+        min_time_series_length = length_of_opt_period * 2 + lead_time
+
+        if length > min_time_series_length:
+            skiped_last_lead_time = length - lead_time
+            opt_time_series = self.sim_result.head(skiped_last_lead_time).tail(length_of_opt_period)
+            opt_stock_level = opt_time_series["inv"].agg("mean")
+        else:
+            opt_stock_level = sim_result["inv"][length - 1]
+
+        return opt_stock_level
+
+
+    def data_collection_in_dataframe_for_constructor(self, sim_rio_items, rio_item_details):
         #Næ í upplýsingar úr extra params dictionary hluta í simulatoir_input_his
         my_dict = json.loads(self.simulator_input_his['extra_params'][0])
         # convert the dictionary to a Pandas DataFrame
@@ -281,14 +299,41 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
 
         #Sameina datafream
         sim_rio_items = sim_rio_items.reset_index()
-        result = pd.concat([df, sim_rio_items], axis=1)
+        sim_rio_item_details = rio_item_details.reset_index()
+
+        sim_rio_item_details = sim_rio_item_details.drop('purchasing_method', axis=1)
+        sim_rio_item_details = sim_rio_item_details.drop('min', axis=1)
+        sim_rio_item_details = sim_rio_item_details.drop('max', axis=1)
+        sim_rio_item_details = sim_rio_item_details.drop('description', axis=1)
+        sim_rio_item_details = sim_rio_item_details.drop('del_time', axis=1)
+
+
+        result = pd.concat([df, sim_rio_items, sim_rio_item_details], axis=1)
+        result['purch_sugg'] = self.sim_result.iloc[0,2]
+        result['optimal_stock'] = self.optimal_stock_level(self.sim_result, sim_rio_items)
+        result['optimal_stock_value'] = result['optimal_stock']*result['unit_cost']
+        result['current_stock_value'] = result['updated_current_inventory']*result['unit_cost']
+        result['current_vs_optimal_diff_value'] = result['current_stock_value'] - result['optimal_stock_value']
+        result['opt_stock_status'] = 'n/a'
+        result['agg_movement_last_3_years'] = result['movement_three_year']+result['movement_two_year']+result['movement_last_year']
+
+        if result.loc[0, 'current_vs_optimal_diff_value'] < 0:
+            result.loc[:, 'opt_stock_status'] = 'Understock'
+        else:
+            result.loc[:, 'opt_stock_status'] = 'Overstock'
+
 
         #Vel rétta dálka og rename einn dálk
         result = result[
-            ['lead_time', 'order_freq', 'lead_forecast', 'buy_forecast', 'bakcorder', 'safety_stock', 'bypass_forecast',
-             'updated_current_inventory', 'pn', 'description', 'del_time', 'buy_freq', 'purchasing_method', 'min',
-             'max']]
+            ['pn', 'description', 'lead_time', 'order_freq', 'lead_forecast', 'buy_forecast', 'bakcorder', 'safety_stock', 'bypass_forecast',
+             'updated_current_inventory', 'del_time', 'buy_freq', 'purchasing_method',
+             'vendor_name', 'stock_units', 'inv_class_cd', 'service_level',
+             'min', 'max', 'comment', 'movement_last_year', 'usage_last_year', 'movement_two_year', 'usage_two_year',
+             'movement_three_year', 'usage_three_year', 'purch_sugg', 'optimal_stock', 'unit_cost', 'optimal_stock_value',
+             'current_stock_value', 'current_vs_optimal_diff_value', 'opt_stock_status', 'agg_movement_last_3_years']]
+
         result = result.rename(columns={'updated_current_inventory': 'current_inventory'})
+
 
         return result
 
@@ -306,11 +351,13 @@ if __name__ == '__main__':
     start_time = datetime.now()
     print(start_time)
 
-    sim_input_his = inp_data.create_rio_his_test_data('Q4631')
-    sim_rio_items = inp_data.create_rio_items_test_data('Q4631')
-    sim_rio_item_details = inp_data.create_rio_item_details_test_data('Q4631')
-    sim_rio_on_order = inp_data.create_on_order_test_data('Q4631')
-    a = inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, 750, 5000, 0.97)
+    sim_input_his = inp_data.create_rio_his_test_data('69906')
+    sim_rio_items = inp_data.create_rio_items_test_data('69906')
+    sim_rio_item_details = inp_data.create_rio_item_details_test_data('69906')
+    sim_rio_on_order = inp_data.create_on_order_test_data('69906')
+
+
+    a = inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, sim_rio_item_details, 750, 5000, 0.97)
 
     #for index, row in inp_data.rio_items.head(5).iterrows():
       #  sim_input_his = inp_data.create_rio_his_test_data(row['pn'])
@@ -328,3 +375,7 @@ if __name__ == '__main__':
     print('-----------------------------------------------------------------------------------------------')
     print(a.sim_result)
     print(a.as_is_info.columns)
+    my_dict = json.loads(a.simulator_input_his['extra_params'][0])
+    # convert the dictionary to a Pandas DataFrame
+    df = pd.DataFrame.from_dict(my_dict['extra_params'][0], orient='index').T
+    print(a.simulator_input_his.iloc[0,7])
