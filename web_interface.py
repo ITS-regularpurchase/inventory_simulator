@@ -23,7 +23,7 @@ def convert_df(df):
 
 st.set_page_config(
     page_title="ITS - Regular purchase simulator",
-    page_icon="ice.jpeg",
+    page_icon="✈️",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={

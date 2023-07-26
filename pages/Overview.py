@@ -5,20 +5,21 @@ import plotly.graph_objects as go
 import plotly.offline as pyo
 from authentication import check_password
 
+st.set_page_config(
+    page_title="Overview",
+    page_icon="✈️",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://www.extremelycoolapp.com/help',
+        'Report a bug': "https://www.extremelycoolapp.com/bug",
+        # 'Get Help': "mailto:sigurduroli@icelandair.is?subject=st.help&body=Mig vantar aðstoð með ...",
+        # 'Report a bug': "mailto:sigurduroli@icelandair.is?subject=st.bug&body=Það er villa í ...",
+        'About': "### Inventory Simulator \n ## Tengiliður: *sigurduroli@icelandair.is* \n\n---"
+    }
+)
+
 if check_password():
-    st.set_page_config(
-        page_title="Ex-stream-ly Cool App",
-        page_icon="🧊",
-        layout="wide",
-        initial_sidebar_state="expanded",
-        menu_items={
-            'Get Help': 'https://www.extremelycoolapp.com/help',
-            'Report a bug': "https://www.extremelycoolapp.com/bug",
-            'About': "# This is a header. This is an *extremely* cool app!"
-        }
-    )
-
-
     if 'data' not in st.session_state:
         st.session_state.data = sim.get_raw_data()
         pn_list = st.session_state.data.rio_items['pn']
