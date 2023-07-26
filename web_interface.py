@@ -1,6 +1,6 @@
 import streamlit as st
 #import streamlit_authenticator as stauth
-from st_aggrid import AgGrid, GridOptionsBuilder
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 import inventory_opt_and_forecasting_package as inv
 import pandas as pd
 import plotly.graph_objs as plotly_go
@@ -12,7 +12,7 @@ from authentication import check_password
 
 inp_data = inv.get_raw_data()
 rio_items = inp_data.get_rio_items()
-rio_items = rio_items[['pn', 'description', 'actual_stock', 'del_time', 'buy_freq', 'purchasing_method']]
+rio_items = rio_items[['pn', 'description', 'actual_stock', 'del_time', 'buy_freq', 'purchasing_method', 'min', 'max']]
 
 
 ## INIT / CONFIG:
@@ -59,12 +59,32 @@ if check_password():
     #builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
     builder.configure_pagination(enabled=False, paginationPageSize=15)
     builder.configure_selection('single')
+    builder.configure_columns(["min", "max"], width=80)
+    jscode = JsCode("""
+            function(params) {
+                if (!params.data.min == 0 || !params.data.max == 0) {
+                    if (params.data.min > params.data.actual_stock) {
+                        return {
+                            'color': 'white',
+                            'backgroundColor': 'red'
+                        }
+                    }
+                    else if (params.data.max < params.data.actual_stock) {
+                        return {
+                            'color': 'white',
+                            'backgroundColor': 'green'
+                        }
+                    }
+                }
+            };
+            """) # JavaScript til að lita AgGrid row rauða eða græna eftir því hvort actual_stock er undir min eða yfir max 
     go = builder.build()
+    go['getRowStyle'] = jscode
 
     with st.expander("Part number grid"):
         search_term = st.text_input('Enter Partnumber')
         filtered_grid = rio_items[rio_items['pn'].str.contains(search_term,case=False)]
-        grid_return = AgGrid(filtered_grid,go, height=400) 
+        grid_return = AgGrid(filtered_grid,go, height=450, allow_unsafe_jscode=True) 
         #grid_return = AgGrid(rio_items, go)
 
     selected_rows = grid_return['selected_rows']
