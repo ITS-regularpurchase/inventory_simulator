@@ -18,6 +18,7 @@ st.set_page_config(
 )
 
 
+
 if check_password():
     st.title('Verðlisti - Icelandair :airplane:')
     current_time = time.strftime("%H:%M:%S")
@@ -34,9 +35,16 @@ if check_password():
     def load_data():
         df = verdlisti()
         return df
-
-    pl = load_data()
-    st.success('Verðlisti sóttur!')
+    
+    success = st.empty()
+    
+    with success.container():
+        pl = load_data()
+        if pl is not None:
+            st.success('Verðlisti sóttur!')
+        time.sleep(5)
+            
+    success.empty()
 
     if top_ten:
         # TODO: fix this
