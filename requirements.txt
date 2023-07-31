@@ -1,8 +1,8 @@
-numpy==1.25.0
+numpy==1.25.2
 scipy==1.11.0
 streamlit==1.23.0
 streamlit-aggrid==0.3.4.post3
-pandas==2.0.2
+pandas==2.0.3
 plotly==5.15.0
 pymysql==1.1.0 # Ekki endilega nauðsynlegt en er notað einhverstaðar
 ## sqlalchemy (==version?)
