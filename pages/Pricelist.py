@@ -36,14 +36,15 @@ if check_password():
         df = verdlisti()
         return df
     
+    #Success message
     success = st.empty()
-    
+
     with success.container():
         pl = load_data()
         if pl is not None:
             st.success('Verðlisti sóttur!')
         time.sleep(5)
-            
+
     success.empty()
 
     if top_ten:
@@ -57,12 +58,12 @@ if check_password():
                 st.write(f'#### Vörur frá *{vendor_choice}*:')
                 st.write(pl.show_only(vendor_choice))
             else:
-                st.write(pl.df)
-                
+                st.dataframe(pl.df, use_container_width=True)
+        
         else:
             st.write(f"#### *Verð í {currency}:*")
-            st.write(pl.change_currency(currency))
-        
+            st.dataframe(pl.change_currency(currency), use_container_width=True)
+
     with st.expander('Leita PNR'):    
         this_search = st.text_input('Leita PNR', key='search')
             
