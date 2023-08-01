@@ -7,6 +7,7 @@ import plotly.graph_objs as plotly_go
 import inv_sim_chart_package as charts
 import datetime
 import get_data_from_its
+from get_and_post_data import data_import
 from authentication import check_password
 
 
@@ -108,6 +109,7 @@ if check_password():
         sim_rio_items = inp_data.create_rio_items_test_data(pn).reset_index()
         sim_rio_on_order = inp_data.create_on_order_test_data(pn)
         rio_item_details = inp_data.create_rio_item_details_test_data(pn)
+        on_order_df = data_import("data/stocking_items_deliv_date_on_order").data_frame # Dataframe með öllu í pöntun
 
         periods = number_of_days
         number_of_trials = number_of_simulations
@@ -119,7 +121,7 @@ if check_password():
         inv_sim = inv.inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, rio_item_details,  periods, number_of_trials, serv_level)
 
         with st.expander("PN Info"):
-            col1, col2 , col3= st.columns(3)
+            col1, col2 , col3 = st.columns(3)
 
             with col1:
                 st.text("Purchasing Suggestion:" + dfs["pn"].values[0])
@@ -143,11 +145,16 @@ if check_password():
                 agg_3_year_movement = rio_item_details['movement_last_year'].values[0]\
                                 +rio_item_details['movement_two_year'].values[0]\
                                 +rio_item_details['movement_three_year'].values[0]
-                agg_3_year_usage =  rio_item_details['usage_last_year'].values[0]\
+                agg_3_year_usage = rio_item_details['usage_last_year'].values[0]\
                                 +rio_item_details['usage_two_year'].values[0]\
                                 +rio_item_details['usage_three_year'].values[0]
                 st.text("Total Movements Last 3 years :" + str(agg_3_year_movement))
                 st.text("Total Usage Last 3 years :" + str(agg_3_year_usage))
+                try:
+                    st.text("Amount on order: " + str(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_qty']].values[0][0]))
+                    st.text("Delivery date: " + (str(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_date']].values[0][0])).split(' ')[0])
+                except IndexError:
+                    st.text("Not on order.")
 
 
 
