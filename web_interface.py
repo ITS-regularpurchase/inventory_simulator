@@ -60,7 +60,7 @@ if check_password():
     builder.configure_pagination(enabled=False, paginationPageSize=15)
     builder.configure_selection('single')
     builder.configure_columns(["min", "max"], width=80)
-    jscode = JsCode("""
+    coloured_stock_indicator = JsCode("""
             function(params) {
                 if (!params.data.min == 0 || !params.data.max == 0) {
                     if (params.data.min > params.data.actual_stock) {
@@ -79,7 +79,7 @@ if check_password():
             };
             """) # JavaScript til að lita AgGrid row rauða eða græna eftir því hvort actual_stock er undir min eða yfir max 
     go = builder.build()
-    go['getRowStyle'] = jscode
+    go['getRowStyle'] = coloured_stock_indicator
 
     with st.expander("Part number grid"):
         search_term = st.text_input('Enter Partnumber')
