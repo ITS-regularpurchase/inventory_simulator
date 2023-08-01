@@ -5,7 +5,8 @@ import streamlit as st
 
 class verdlisti():
     def __init__(self) -> None:
-        self.df = pd.read_csv('data/verdlisti.csv', sep=';')
+        cols = list(pd.read_csv('data/verdlisti.csv', sep=';', nrows=1))
+        self.df = pd.read_csv('data/verdlisti.csv', sep=';', usecols=[i for i in cols if i != 'SPQ'])
         
         
     def change_currency(self, currency: str) -> pd.DataFrame:
