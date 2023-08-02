@@ -151,8 +151,11 @@ if check_password():
                 st.text("Total Movements Last 3 years :" + str(agg_3_year_movement))
                 st.text("Total Usage Last 3 years :" + str(agg_3_year_usage))
                 try:
-                    st.text("Amount on order: " + str(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_qty']].values[0][0]))
-                    st.text("Delivery date: " + (str(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_date']].values[0][0])).split(' ')[0])
+                    if float(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_qty']].values[0][0]) > 0:
+                        st.text("Amount on order: " + str(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_qty']].values[0][0]))
+                        st.text("Delivery date: " + (str(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_date']].values[0][0])).split(' ')[0])
+                    else:
+                        st.text("None on order.")
                 except IndexError:
                     st.text("Not on order.")
 
