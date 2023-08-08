@@ -24,12 +24,10 @@ if check_password():
     current_time = time.strftime("%H:%M:%S")
     st.write(current_time)
 
-    slider = int(st.sidebar.slider('Hversu margir?', 1, 50, 10))
-    top_ten = st.sidebar.checkbox(f'{slider} dýrustu hlutir')
-    st.sidebar.write('---')
+
     currency = st.sidebar.radio(options=('Default', 'USD', 'EUR'), label='Gjaldmiðill')
     st.sidebar.write('---')
-    vendor_choice = st.sidebar.selectbox('**Veldu birgja**', options=['All'] + [vendor for vendor in verdlisti().df['Vendor'].unique()], index=0, key='vendor')
+    vendor_choice = st.sidebar.selectbox('**Veldu birgja**', options=['Allir'] + [vendor for vendor in verdlisti().df['Vendor'].unique()], index=0, key='vendor')
     
     @st.cache_data(show_spinner="Sæki verðlista...")
     def load_data():
@@ -47,14 +45,10 @@ if check_password():
 
     success.empty()
 
-    if top_ten:
-        # TODO: fix this
-        pl = pl.sort_by_price(int(slider))
-        st.dataframe(pl)
     
     with st.expander('Verðlisti'):
         if currency == 'Default':
-            if vendor_choice != 'All':
+            if vendor_choice != 'Allir':
                 st.write(f'#### Vörur frá *{vendor_choice}*:')
                 st.write(pl.show_only(vendor_choice))
             else:
