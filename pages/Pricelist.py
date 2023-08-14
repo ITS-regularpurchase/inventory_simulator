@@ -1,7 +1,10 @@
-import streamlit as st
-from verdlisti_df import verdlisti
 import time
+import streamlit as st
+import pandas as pd
+import numpy as np
+from verdlisti_df import verdlisti
 from authentication import check_password
+from st_aggrid import AgGrid, GridOptionsBuilder, ColumnsAutoSizeMode
 
 st.set_page_config(
     page_title="Pricelist",
@@ -67,6 +70,19 @@ if check_password():
             st.write(duplicate.change_currency(currency)[duplicate['PNR'] == this_search].style.highlight_min(subset='Price', color='lightgreen', axis=0))
         else:
             st.write(duplicate)
+    
+    #Configure AgGrid
+    cols = list(pd.read_csv('data/verdlisti.csv', sep=';', nrows=1))
+    builder = GridOptionsBuilder.from_dataframe(pd.read_csv('data/verdlisti.csv', sep=';', usecols=[i for i in cols if i != 'SPQ']))
+    pl_df = pd.read_csv('data/verdlisti.csv', sep=';', usecols=[i for i in cols if i != 'SPQ'])
+    pl_go = builder.build()
+    
+    
+            
+    with st.expander('AgGrid PN Search'):
+        search = st.text_input('Leita PNR', key='ag_search')
+        display_values = np.where((pl_df['PNR'].str.contains(search, case=False)) & (pl_df['Vendor'].str.contains(vendor_choice, case=False) if vendor_choice != 'Allir' else True))
+        pl_display = AgGrid(pl_df.loc[display_values], gridOptions=pl_go, height=500, columns_auto_size_mode=ColumnsAutoSizeMode.FIT_ALL_COLUMNS_TO_VIEW)
         
         
     
