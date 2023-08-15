@@ -47,7 +47,6 @@ if check_password():
         time.sleep(5)
 
     success.empty()
-    st.write(pl.df.dtypes['Price'])
 
     
     with st.expander('Verðlisti'):
