@@ -16,7 +16,7 @@ st.set_page_config(
         'Report a bug': "https://www.extremelycoolapp.com/bug",
         # 'Get Help': "mailto:sigurduroli@icelandair.is?subject=st.help&body=Mig vantar aðstoð með ...",
         # 'Report a bug': "mailto:sigurduroli@icelandair.is?subject=st.bug&body=Það er villa í ...",
-        'About': "### Inventory Simulator \n ## Tengiliður: *sigurduroli@icelandair.is* \n\n---"
+        'About': "### Inventory Simulator \n ## Tengiliður: *sigurduroli@icelandair.is* \n---\n*Icelandair Technical Services*"
     }
 )
 
@@ -38,15 +38,16 @@ if check_password():
         return df
     
     #Success message
-    success = st.empty()
+    if 'success' not in st.session_state:
+        success = st.empty()
 
-    with success.container():
-        pl = load_data()
-        if pl.df.empty == False:
-            st.success('Verðlisti sóttur!')
-        time.sleep(5)
+        with success.container():
+            pl = load_data()
+            if pl.df.empty == False:
+                st.success('Verðlisti sóttur!')
+            time.sleep(5)
 
-    success.empty()
+        success.empty()
 
     
     with st.expander('Verðlisti'):
@@ -74,22 +75,27 @@ if check_password():
     
     builder = GridOptionsBuilder.from_dataframe(pl.df)
     builder.configure_side_bar()
-    builder.configure_column("PNR", rowGroup=True)
-    builder.configure_column("Price", aggFunc='min')
-    pl_go = builder.build()
     highlighted_rows = JsCode(""" 
                               TODO: Write JsCode to highligh row with lowest price for each PNR
                               """)
     
     
-            
+
     with st.expander('AgGrid PN Search'):
         search = st.text_input('Leita PNR', key='ag_search')
         
-        display_values = np.where((pl.df['PNR'].str.contains(search, case=False)) & 
-                                  (pl.df['Vendor'].str.contains(vendor_choice, case=False) if vendor_choice != 'Allir' else True))
+        if vendor_choice == 'Allir':
+            display_values = np.where(pl.df['PNR'].str.contains(search, case=False))
+                                  
+        else:
+            pl.show_only(vendor_choice)
+            display_values = np.where((pl.df['PNR'].str.contains(search, case=False)))
         
-        displayed_grid = AgGrid(pl.df.loc[display_values],
+        if vendor_choice == 'Allir':
+            builder.configure_column("PNR", rowGroup=True)
+            builder.configure_column("Price", aggFunc='min')
+            pl_go = builder.build()
+            displayed_grid = AgGrid(pl.df.loc[(pl.df['PNR'].str.contains(search, case=False))],
                                 gridOptions=pl_go,
                                 height=500,
                                 sorted_col='PNR',
@@ -99,6 +105,17 @@ if check_password():
                                 update_on=['cellValueChanged']
                                 )
         
+        else:
+            pl_go = builder.build()
+            displayed_grid = AgGrid(pl.df.loc[(pl.df['PNR'].str.contains(search, case=False)) & (pl.df['Vendor'] == vendor_choice)],
+                                gridOptions=pl_go,
+                                height=500,
+                                sorted_col='PNR',
+                                reload_data=False,
+                                fit_columns_on_grid_load=True,
+                                columns_auto_size_mode=ColumnsAutoSizeMode.FIT_ALL_COLUMNS_TO_VIEW,
+                                update_on=['cellValueChanged']
+                                )
         
     
     st.write('---')
