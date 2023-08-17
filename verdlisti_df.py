@@ -14,9 +14,9 @@ class verdlisti():
         exchange_rate = {'ISK': 140, 'USD': 1.0723, 'EUR': 0.94}
         
         if currency == 'USD':
-            self.df['Currency'], self.df['Price'] = currency, np.where(self.df['Currency'] == currency, self.df['Price'], np.round(pd.to_numeric(self.df['Price'].str.replace(',','.')) * exchange_rate[currency], 2))
+            self.df['Currency'], self.df['Price'] = currency, np.where(self.df['Currency'] == currency, self.df['Price'], np.round(self.df['Price'] * exchange_rate[currency], 2))
         elif currency == 'EUR':
-            self.df['Currency'], self.df['Price'] = currency, np.where(self.df['Currency'] == currency, self.df['Price'], np.round(pd.to_numeric(self.df['Price'].str.replace(',','.')) * exchange_rate[currency], 2))
+            self.df['Currency'], self.df['Price'] = currency, np.where(self.df['Currency'] == currency, self.df['Price'], np.round(self.df['Price'] * exchange_rate[currency], 2))
         return self.df
     
     def sort_by_price(self, amount:int) -> pd.DataFrame:
