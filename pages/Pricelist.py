@@ -62,16 +62,6 @@ if check_password():
             st.write(f"#### *Verð í {currency}:*")
             st.dataframe(pl.change_currency(currency), use_container_width=True)
 
-    with st.expander('Leita PNR'):    
-        this_search = st.text_input('Leita PNR', key='search')
-            
-        duplicate = pl.df[pl.df.duplicated(subset='PNR', keep=False)].sort_values(by=['PNR', 'Price'], ascending=True)
-        
-        if this_search:
-            st.write(duplicate.change_currency(currency)[duplicate['PNR'] == this_search].style.highlight_min(subset='Price', color='lightgreen', axis=0))
-        else:
-            st.write(duplicate)
-
     
     builder = GridOptionsBuilder.from_dataframe(pl.df)
     builder.configure_side_bar()
