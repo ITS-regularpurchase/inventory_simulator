@@ -50,19 +50,6 @@ if check_password():
         success.empty()
 
     
-    with st.expander('Verðlisti'):
-        if currency == 'Default':
-            if vendor_choice != 'Allir':
-                st.write(f'#### Vörur frá *{vendor_choice}*:')
-                st.write(pl.show_only(vendor_choice))
-            else:
-                st.dataframe(pl.df, use_container_width=True)
-        
-        else:
-            st.write(f"#### *Verð í {currency}:*")
-            st.dataframe(pl.change_currency(currency), use_container_width=True)
-
-    
     builder = GridOptionsBuilder.from_dataframe(pl.df)
     builder.configure_side_bar()
     highlighted_rows = JsCode(""" 
