@@ -45,6 +45,7 @@ if check_password():
             pl = load_data()
             if pl.df.empty == False:
                 st.success('Verðlisti sóttur!')
+                st.session_state.success = True
             time.sleep(5)
 
         success.empty()
