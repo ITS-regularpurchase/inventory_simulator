@@ -85,13 +85,6 @@ if check_password():
         search = st.text_input('Leita PNR', key='ag_search')
         
         if vendor_choice == 'Allir':
-            display_values = np.where(pl.df['PNR'].str.contains(search, case=False))
-                                  
-        else:
-            pl.show_only(vendor_choice)
-            display_values = np.where((pl.df['PNR'].str.contains(search, case=False)))
-        
-        if vendor_choice == 'Allir':
             builder.configure_column("PNR", rowGroup=True)
             builder.configure_column("Price", aggFunc='min')
             pl_go = builder.build()
