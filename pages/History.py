@@ -3,10 +3,10 @@ import datetime as dt
 import pandas as pd
 import random
 import numpy as np
-import pyodbc
 from datetime import datetime, timedelta, date
 from st_aggrid import AgGrid, GridOptionsBuilder
 import movements_to_csv as W
+from authentication import check_password
 
 st.set_page_config(
     page_title="History",
