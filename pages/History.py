@@ -5,7 +5,7 @@ import random
 import numpy as np
 from datetime import datetime, timedelta, date
 from st_aggrid import AgGrid, GridOptionsBuilder
-import movements_to_csv as W
+#import movements_to_csv as W
 from authentication import check_password
 
 st.set_page_config(
@@ -26,7 +26,7 @@ st.set_page_config(
 
 if check_password():
 
-        file=W.server_to_csv()
+        #file=W.server_to_csv()
         
         df = pd.read_csv('History.csv')
         df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S') #df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
