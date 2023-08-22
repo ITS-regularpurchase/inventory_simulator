@@ -28,7 +28,7 @@ if check_password():
 
         #file=W.server_to_csv()
         
-        df = pd.read_csv('data/History.csv',sep=';', decimal=',')
+        df = pd.read_csv('data/history.csv')
         df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S') #df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
         
         columns=["PART_NUMBER","date","move_type","qty","location_no","LOC"]
