@@ -5,6 +5,7 @@ streamlit-aggrid==0.3.4.post3
 pandas==2.0.3
 plotly==5.15.0
 pymysql==1.1.0 # Ekki endilega nauðsynlegt en er notað einhverstaðar
+pyodbc==4.0.35
 ## sqlalchemy (==version?)
 ## urllib (Version? / nota frekar requests library?) 
 ## Hvaðan kemur monte_carlo_forecast í rio_purchasing_system.py ?
