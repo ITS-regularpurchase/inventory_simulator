@@ -7,7 +7,6 @@ from datetime import datetime, timedelta, date
 from st_aggrid import AgGrid, GridOptionsBuilder
 #import movements_to_csv as W
 from authentication import check_password
-import History.csv
 
 st.set_page_config(
     page_title="History",
