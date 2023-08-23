@@ -7,7 +7,8 @@ from datetime import datetime, timedelta, date
 from st_aggrid import AgGrid, GridOptionsBuilder
         
 df = pd.read_csv('data/history.csv')
-df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S') #df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+#df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d %H:%M:%S') #df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
+df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
 
 columns=["PART_NUMBER","date","move_type","qty","location_no","LOC"]
 builder = GridOptionsBuilder.from_dataframe(df[columns])
