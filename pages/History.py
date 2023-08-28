@@ -56,10 +56,10 @@ days= end_date-start_date
 
 with elements("Usage info"):
         col1, col2 = st.columns(2)
-            with col1:
-                    st.text( "PN: "+ search_term)
-                    st.text(f"Notkun: {usage}")
-                    st.text(f"Tímabil: {days.days} dagar")
+        with col1:
+                st.text( "PN: "+ search_term)
+                st.text(f"Notkun: {usage}")
+                st.text(f"Tímabil: {days.days} dagar")
         
 
 with st.expander("Usage info"):
