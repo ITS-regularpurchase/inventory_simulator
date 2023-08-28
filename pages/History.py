@@ -53,7 +53,7 @@ grid_return = AgGrid(RESUL[columns].sort_values(by='date'),go,fit_columns_on_gri
 usage=filtered_df["qty"].sum()
 days= end_date-start_date
 
-with st.expander("Usage info"):
+with st.container("Usage info"):
             col1, col2 = st.columns(2)
             with col1:
                     st.text( "PN: "+ search_term)
