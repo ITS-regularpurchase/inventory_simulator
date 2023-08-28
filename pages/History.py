@@ -5,6 +5,7 @@ import random
 import numpy as np
 from datetime import datetime, timedelta, date
 from st_aggrid import AgGrid, GridOptionsBuilder
+from streamlit_elements import elements, mui, html
         
 df = pd.read_csv('data/history.csv')
 df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
@@ -53,7 +54,15 @@ grid_return = AgGrid(RESUL[columns].sort_values(by='date'),go,fit_columns_on_gri
 usage=filtered_df["qty"].sum()
 days= end_date-start_date
 
-with st.container():#"Usage info"
+with elements("Usage info"):
+        col1, col2 = st.columns(2)
+            with col1:
+                    st.text( "PN: "+ search_term)
+                    st.text(f"Notkun: {usage}")
+                    st.text(f"Tímabil: {days.days} dagar")
+        
+
+with st.expander("Usage info"):
             col1, col2 = st.columns(2)
             with col1:
                     st.text( "PN: "+ search_term)
