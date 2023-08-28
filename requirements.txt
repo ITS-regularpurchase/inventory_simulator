@@ -5,6 +5,7 @@ streamlit-aggrid==0.3.4.post3
 pandas==2.0.3
 plotly==5.15.0
 pyodbc==4.0.35
+streamlit-elements==0.1.
 pymysql==1.1.0 # Ekki endilega nauðsynlegt en er notað einhverstaðar
 ## sqlalchemy (==version?)
 ## urllib (Version? / nota frekar requests library?) 
