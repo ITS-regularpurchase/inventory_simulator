@@ -5,7 +5,6 @@ import random
 import numpy as np
 from datetime import datetime, timedelta, date
 from st_aggrid import AgGrid, GridOptionsBuilder
-from streamlit_elements import elements, mui, html
         
 df = pd.read_csv('data/history.csv')
 df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
@@ -54,18 +53,28 @@ grid_return = AgGrid(RESUL[columns].sort_values(by='date'),go,fit_columns_on_gri
 usage=filtered_df["qty"].sum()
 days= end_date-start_date
 
-with elements("Usage info"):
-        col1, col2 = st.columns(2)
-        with col1:
-                st.text( "PN: "+ search_term)
-                st.text(f"Notkun: {usage}")
-                st.text(f"Tímabil: {days.days} dagar")
-        
+text = f"""
+PN: {search_term}\n
+Notkun: {usage}\n
+Tímabil: {days.days} dagar"""
+centered_text = "Usage info"
 
-with st.expander("Usage info"):
-            col1, col2 = st.columns(2)
-            with col1:
-                    st.text( "PN: "+ search_term)
-                    st.text(f"Notkun: {usage}")
-                    st.text(f"Tímabil: {days.days} dagar")
+# Use the st.markdown() function with HTML/CSS to create a box
+st.markdown(
+    f"""
+    <div style="display: flex; justify-content: center;">
+        {centered_text}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+st.markdown( 
+    f"""
+    <div style="border: 2px solid #e0e0e0; padding: 10px; border-radius: 5px;">
+        {text}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+        
 
