@@ -19,7 +19,7 @@ go = builder.build()
 
 today=datetime.now() #today=datetime.now().date()
 one_year_ago = today - timedelta(days=365)
-st.write("Last update on data 28.08.2023 - 14:43")
+st.write("Last update on data 25.09.2023 - 15:02")
 
 with st.form("My_form"):
         col1, col2 = st.columns(2)
