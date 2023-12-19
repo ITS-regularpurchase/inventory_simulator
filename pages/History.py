@@ -21,7 +21,7 @@ st.set_page_config(
         'About': "### Inventory Simulator \n ## Tengiliður: *sigurduroli@icelandair.is* \n\n---"
     }
 )        
-df = pd.read_csv('data/History.csv')
+df = pd.read_csv('data/historical_data.csv')
 df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')
 
 if check_password():
