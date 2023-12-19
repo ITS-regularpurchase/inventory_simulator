@@ -1,4 +1,4 @@
-numpy==1.25.2
+numpy==1.29.0
 scipy==1.11.1
 streamlit==1.25.0
 streamlit-aggrid==0.3.4.post3
