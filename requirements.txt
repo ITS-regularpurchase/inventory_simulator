@@ -8,4 +8,3 @@ pyodbc==4.0.35
 pymysql==1.1.0 # Ekki endilega nauðsynlegt en er notað einhverstaðar
 ## sqlalchemy (==version?)
 ## urllib (Version? / nota frekar requests library?) 
-## Hvaðan kemur monte_carlo_forecast í rio_purchasing_system.py ?
