@@ -29,21 +29,21 @@ if check_password():
     avail = ord(pn[0]) * np.random.randint(2, 3) if len(pn) else "0"
     price = ord(pn[0]) * np.random.randint(8, 30) if len(pn) else "0"
     
-    col1, col2, col3, col4 = st.columns(4)
+    usg1_col, usg3_col, avail_col, price_col = st.columns(4)
     
-    with col1:
+    with usg1_col:
         st.title(usg_1, anchor=False)
         st.write("Notkun síðasta ár")
         
-    with col2:
+    with usg3_col:
         st.title(usg_3, anchor=False)
         st.write('Meðalnotkun síðustu 3 ár')
         
-    with col3:
+    with avail_col:
         st.title(avail, anchor=False)
         st.write('Available')
         
-    with col4:
+    with price_col:
         st.title(price, anchor=False)
         st.write('Verð í USD')
     
