@@ -1,9 +1,11 @@
 import streamlit as st
+from st_aggrid import AgGrid, GridOptionsBuilder
 import inventory_opt_and_forecasting_package as sim
 import part_number_container as pc
 import plotly.graph_objects as go
 import plotly.offline as pyo
 from authentication import check_password
+import pandas as pd
 
 if check_password():
     st.set_page_config(
@@ -19,6 +21,8 @@ if check_password():
     )
 
 
+
+
     if 'data' not in st.session_state:
         st.session_state.data = sim.get_raw_data()
         pn_list = st.session_state.data.rio_items['pn']
@@ -26,6 +30,13 @@ if check_password():
 
 
     alda = st.session_state.alda
+
+    rio_items = alda.as_is_container_for_grid[['pn', 'description', 'current_inventory', 'purch_sugg', 'min', 'max', 'del_time', 'buy_freq',
+                 'purchasing_method', 'agg_movement_last_3_years', 'optimal_stock', 'unit_cost', 'optimal_stock_value']]
+    builder = GridOptionsBuilder.from_dataframe(rio_items)
+    builder.configure_pagination(enabled=False, paginationPageSize=15)
+    builder.configure_selection('single')
+    go = builder.build()
 
 
     opt_plan = alda.overview_opt_plan
@@ -76,6 +87,18 @@ if check_password():
             , 'agg_movement_last_3_years', 'optimal_stock', 'unit_cost', 'optimal_stock_value']]
             # 'current_stock_value', 'opt_stock_status']]
             st.dataframe(alda.as_is_container_for_grid)
+
+        with tab3:
+            grid_return = AgGrid(rio_items, go, height=400)
+
+            selected_rows = grid_return['selected_rows']
+            st.text(selected_rows)
+
+            if selected_rows:
+                dfs = pd.DataFrame(selected_rows)
+                # pn = type(dfs["pn"])
+                pn = dfs["pn"].values[0]
+
 
 
 

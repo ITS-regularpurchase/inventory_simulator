@@ -38,9 +38,13 @@ if __name__ == '__main__':
     sim_input_his = inp_data.create_rio_his_test_data('Q4631')
     sim_rio_items = inp_data.create_rio_items_test_data('Q4631')
     sim_rio_on_order = inp_data.create_on_order_test_data('Q4631')
-    a = inv.inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, 750, 5000, 0.97)
+    rio_item_details = inp_data.create_rio_item_details_test_data('Q4631')
+    a = inv.inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, rio_item_details, 750, 5000, 0.97)
 
     ch = inv_sim_charts
-    buy = ch.plotly_draw_histo_with_cum(a.histo_with_cum_buy, a.serv_level_value_buy)
+    buy = ch.plotly_draw_histo_with_cum(a.histo_with_cum_buy, a.serv_level_value_buy, 'Alda')
     pyo.plot(buy)
+
+    print(a.histo_with_cum_buy)
+    print(a.serv_level_value_buy)
 

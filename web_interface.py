@@ -10,6 +10,8 @@ import get_data_from_its
 from authentication import check_password
 
 
+
+
 inp_data = inv.get_raw_data()
 rio_items = inp_data.get_rio_items()
 rio_items = rio_items[['pn', 'description', 'actual_stock', 'del_time', 'buy_freq', 'purchasing_method']]
@@ -65,7 +67,7 @@ if check_password():
         search_term = st.text_input('Enter Partnumber')
         filtered_grid = rio_items[rio_items['pn'].str.contains(search_term,case=False)]
         grid_return = AgGrid(filtered_grid,go, height=400) 
-        #grid_return = AgGrid(rio_items, go)
+
 
     selected_rows = grid_return['selected_rows']
 

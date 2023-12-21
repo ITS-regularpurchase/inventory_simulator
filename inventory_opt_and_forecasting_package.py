@@ -11,6 +11,7 @@ import streamlit as st
 
 
 
+
 class forecasts:
     def __init__(self, timarod, periods, number_of_trials, serv_lev):
         self.histogram = self.monte_forecast(timarod, periods, number_of_trials)
@@ -113,7 +114,7 @@ class get_raw_data():
 
         min_date = sim_input_his['day'].min()
         #max_date = sim_input_his['day'].max()
-        max_date = '2023-07-12'
+        max_date = datetime.today().strftime('%Y-%m-%d')
 
         idx = pd.date_range(min_date, max_date)
 
@@ -351,10 +352,10 @@ if __name__ == '__main__':
     start_time = datetime.now()
     print(start_time)
 
-    sim_input_his = inp_data.create_rio_his_test_data('69906')
-    sim_rio_items = inp_data.create_rio_items_test_data('69906')
-    sim_rio_item_details = inp_data.create_rio_item_details_test_data('69906')
-    sim_rio_on_order = inp_data.create_on_order_test_data('69906')
+    sim_input_his = inp_data.create_rio_his_test_data('39-188')
+    sim_rio_items = inp_data.create_rio_items_test_data('39-188')
+    sim_rio_item_details = inp_data.create_rio_item_details_test_data('39-188')
+    sim_rio_on_order = inp_data.create_on_order_test_data('39-188')
 
 
     a = inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, sim_rio_item_details, 750, 5000, 0.97)
@@ -379,3 +380,4 @@ if __name__ == '__main__':
     # convert the dictionary to a Pandas DataFrame
     df = pd.DataFrame.from_dict(my_dict['extra_params'][0], orient='index').T
     print(a.simulator_input_his.iloc[0,7])
+    print(sim_input_his)
