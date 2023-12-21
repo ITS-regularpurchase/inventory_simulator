@@ -87,13 +87,13 @@ if check_password():
     with st.expander("Part number grid"):
         search_term = st.text_input('Enter Partnumber')
         filtered_grid = rio_items[rio_items['pn'].str.contains(search_term,case=False)]
-<<<<<<< HEAD
+
         grid_return = AgGrid(filtered_grid,go, height=400) 
 
-=======
+
         grid_return = AgGrid(filtered_grid,go, height=450, allow_unsafe_jscode=True) 
         #grid_return = AgGrid(rio_items, go)
->>>>>>> 7ce3e17b6e556fe0018e601e46b214c7c1b7368e
+
 
     selected_rows = grid_return['selected_rows']
 
