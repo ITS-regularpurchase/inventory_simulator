@@ -5,5 +5,5 @@ class data_import:
         self.data_frame = self.import_csv(file_name)
 
     def import_csv(self, file_name) -> pd.DataFrame:
-        df = pd.read_csv(file_name+'.csv')
+        df = pd.read_csv(file_name + '.csv')
         return df

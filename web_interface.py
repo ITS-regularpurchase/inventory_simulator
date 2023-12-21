@@ -1,12 +1,13 @@
 import streamlit as st
 #import streamlit_authenticator as stauth
-from st_aggrid import AgGrid, GridOptionsBuilder
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 import inventory_opt_and_forecasting_package as inv
 import pandas as pd
 import plotly.graph_objs as plotly_go
 import inv_sim_chart_package as charts
 import datetime
 import get_data_from_its
+from get_and_post_data import data_import
 from authentication import check_password
 
 
@@ -14,7 +15,7 @@ from authentication import check_password
 
 inp_data = inv.get_raw_data()
 rio_items = inp_data.get_rio_items()
-rio_items = rio_items[['pn', 'description', 'actual_stock', 'del_time', 'buy_freq', 'purchasing_method']]
+rio_items = rio_items[['pn', 'description', 'actual_stock', 'del_time', 'buy_freq', 'purchasing_method', 'min', 'max']]
 
 
 ## INIT / CONFIG:
@@ -25,7 +26,7 @@ def convert_df(df):
 
 st.set_page_config(
     page_title="ITS - Regular purchase simulator",
-    page_icon="ice.jpeg",
+    page_icon="✈️",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items={
@@ -61,13 +62,38 @@ if check_password():
     #builder.configure_pagination(enabled=True, paginationAutoPageSize=False, paginationPageSize=10)
     builder.configure_pagination(enabled=False, paginationPageSize=15)
     builder.configure_selection('single')
+    builder.configure_columns(["min", "max"], width=80)
+    coloured_stock_indicator = JsCode("""
+            function(params) {
+                if (!params.data.min == 0 || !params.data.max == 0) {
+                    if (params.data.min > params.data.actual_stock) {
+                        return {
+                            'color': 'white',
+                            'backgroundColor': 'red'
+                        }
+                    }
+                    else if (params.data.max < params.data.actual_stock) {
+                        return {
+                            'color': 'white',
+                            'backgroundColor': 'green'
+                        }
+                    }
+                }
+            };
+            """) # JavaScript til að lita AgGrid row rauða eða græna eftir því hvort actual_stock er undir min eða yfir max 
     go = builder.build()
+    go['getRowStyle'] = coloured_stock_indicator
 
     with st.expander("Part number grid"):
         search_term = st.text_input('Enter Partnumber')
         filtered_grid = rio_items[rio_items['pn'].str.contains(search_term,case=False)]
+<<<<<<< HEAD
         grid_return = AgGrid(filtered_grid,go, height=400) 
 
+=======
+        grid_return = AgGrid(filtered_grid,go, height=450, allow_unsafe_jscode=True) 
+        #grid_return = AgGrid(rio_items, go)
+>>>>>>> 7ce3e17b6e556fe0018e601e46b214c7c1b7368e
 
     selected_rows = grid_return['selected_rows']
 
@@ -90,6 +116,7 @@ if check_password():
         sim_rio_items = inp_data.create_rio_items_test_data(pn).reset_index()
         sim_rio_on_order = inp_data.create_on_order_test_data(pn)
         rio_item_details = inp_data.create_rio_item_details_test_data(pn)
+        on_order_df = data_import("data/stocking_items_deliv_date_on_order").data_frame # Dataframe með öllu í pöntun
 
         periods = number_of_days
         number_of_trials = number_of_simulations
@@ -101,7 +128,7 @@ if check_password():
         inv_sim = inv.inventory_simulator_with_input_prep(sim_input_his, sim_rio_items, sim_rio_on_order, rio_item_details,  periods, number_of_trials, serv_level)
 
         with st.expander("PN Info"):
-            col1, col2 , col3= st.columns(3)
+            col1, col2 , col3 = st.columns(3)
 
             with col1:
                 st.text("Purchasing Suggestion:" + dfs["pn"].values[0])
@@ -125,11 +152,19 @@ if check_password():
                 agg_3_year_movement = rio_item_details['movement_last_year'].values[0]\
                                 +rio_item_details['movement_two_year'].values[0]\
                                 +rio_item_details['movement_three_year'].values[0]
-                agg_3_year_usage =  rio_item_details['usage_last_year'].values[0]\
+                agg_3_year_usage = rio_item_details['usage_last_year'].values[0]\
                                 +rio_item_details['usage_two_year'].values[0]\
                                 +rio_item_details['usage_three_year'].values[0]
                 st.text("Total Movements Last 3 years :" + str(agg_3_year_movement))
                 st.text("Total Usage Last 3 years :" + str(agg_3_year_usage))
+                try:
+                    if float(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_qty']].values[0][0]) > 0:
+                        st.text("Amount on order: " + str(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_qty']].values[0][0]))
+                        st.text("Delivery date: " + (str(on_order_df.loc[on_order_df['pn'] == pn, ['est_deliv_date']].values[0][0])).split(' ')[0])
+                    else:
+                        st.text("None on order.")
+                except IndexError:
+                    st.text("Not on order.")
 
 
 
