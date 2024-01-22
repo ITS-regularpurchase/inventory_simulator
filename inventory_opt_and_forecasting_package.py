@@ -19,26 +19,40 @@ class forecasts:
         self.df_single_forecast = self.single_forecast(timarod, periods)
 
 
-    def single_forecast(self, timarod, periods):
+    def single_forecast(self, timarod: pd.DataFrame, periods: int) -> np.array:
+        """
+        Returns time series of usage forecast that is {periods} days long
+        """
         np_timarod = timarod.iloc[:, 0].to_numpy()
         time_series = random.choice(np_timarod, size=(periods))
 
         return time_series
 
-    def monte_forecast(self, timarod, periods, number_of_trials):
+    def monte_forecast(self, timarod: pd.DataFrame, periods: int, number_of_trials: int) -> list[float]:
+        """
+        Returns simulated quantities for {periods}, {number of trials} times
+        """
         np_timarod = timarod.iloc[:, 0].to_numpy()
         hist = random.choice(np_timarod, size=(periods, number_of_trials)).sum(axis=0)
 
         return hist
 
-    def serv_lev_value(self, histogram, serv_lev):
+    def serv_lev_value(self, histogram, serv_lev: float) -> float:
+        """
+        Returns expected usage simulated for desired service level
+        """
         sorted_histogram = np.sort(histogram)
         line_num = int(serv_lev * len(sorted_histogram))
         serv_lev_val = sorted_histogram[line_num]
 
         return serv_lev_val
 
-    def histogram_with_cum(self, monte_forecast, bins):
+    def histogram_with_cum(self, monte_forecast, bins: int) -> pd.DataFrame:
+        """
+        Sums up forecast to create cumulative histogram line
+        
+        Returns datafram to be displayed
+        """
         # create histogram
         hist, bins = np.histogram(monte_forecast, bins=bins, density=False)
 
@@ -109,6 +123,11 @@ class get_raw_data():
         return rio_on_order
 
     def add_missing_dates_to_sim_input_his(self, sim_input_his):
+        """
+        Takes in usage history
+        
+        Returns new usage history, padded with 0's for empty days
+        """
         all_pn = sim_input_his['item_id'].unique()
         i = 0
 
@@ -291,7 +310,7 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
 
 
     def data_collection_in_dataframe_for_constructor(self, sim_rio_items, rio_item_details):
-        #Næ í upplýsingar úr extra params dictionary hluta í simulatoir_input_his
+        #Næ í upplýsingar úr extra params dictionary hluta í simulator_input_his
         my_dict = json.loads(self.simulator_input_his['extra_params'][0])
         # convert the dictionary to a Pandas DataFrame
         df = pd.DataFrame.from_dict(my_dict['extra_params'][0], orient='index').T
@@ -380,4 +399,6 @@ if __name__ == '__main__':
     # convert the dictionary to a Pandas DataFrame
     df = pd.DataFrame.from_dict(my_dict['extra_params'][0], orient='index').T
     print(a.simulator_input_his.iloc[0,7])
-    print(sim_input_his)
+    print(sim_input_his.head(1))
+    print("histogram lead\n\n\n\n")
+    print(a.histogram_lead)
