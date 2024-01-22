@@ -16,6 +16,9 @@ class inventory_simulator:
         self.simulator_output = self.run_inventory_simulator(invsimdataset)
 
     def update_inventory(self, curr_inv, day_nr, outgoing, incoming, initial_shelf_life, backorder):
+        """
+        
+        """
         # Make sure that the inventory is sorted correctly
         curr_inv.sort(key=lambda x: x[0])
 
@@ -203,6 +206,21 @@ class inventory_simulator:
             return the_defaultvalue
 
     def run_inventory_simulator(self, invsimdataset):
+        """
+        The Purchasing simulator
+        
+        Receives prepped data for one item
+        
+        Returns inventory and purchasing plan/forecast for the inputted item in this format:
+        
+        item_id
+        inv
+        purchase_qty
+        deliveries
+        lost_sale
+        expired
+        sim_date
+        """
         current_id = invsimdataset.item_id[0]
         start_pos = 0
         end_pos = 0
