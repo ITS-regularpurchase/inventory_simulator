@@ -155,7 +155,10 @@ class get_raw_data():
         return new_sim_input_his
 
 class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
-    def __init__(self, sim_input_his, sim_rio_items, sim_rio_on_order, rio_item_details, periods, number_of_trials, serv_level):
+    """
+    F
+    """
+    def __init__(self, sim_input_his: pd.DataFrame, sim_rio_items: pd.DataFrame, sim_rio_on_order: pd.DataFrame, rio_item_details: pd.DataFrame, periods: int, number_of_trials: int, serv_level: float) -> None:
         #upphafsgildi úr montercarlo spá fyrir buy freq og lead time
         self.histogram_lead = self.monte_forecast(sim_input_his[['actual_sale', 'day']], sim_rio_items.loc[:, 'del_time'].values[0], number_of_trials)
         self.serv_level_value_lead = self.serv_lev_value(self.histogram_lead, serv_level)
@@ -171,7 +174,7 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
                                                                       sim_rio_on_order, number_of_trials,
                                                                       serv_level)
         #Output úr simulator
-        self.sim_result = self.simulator_final_result()
+        self.sim_result: pd.DataFrame = self.simulator_final_result()
         self.as_is_info = self.data_collection_in_dataframe_for_constructor(sim_rio_items, rio_item_details)
 
 
@@ -309,7 +312,11 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
         return opt_stock_level
 
 
-    def data_collection_in_dataframe_for_constructor(self, sim_rio_items, rio_item_details):
+    def data_collection_in_dataframe_for_constructor(self, sim_rio_item, rio_item_details) -> pd.DataFrame:
+        """
+        Returns:
+            For partnumber (sim_rio_item), returns all relevant data
+        """
         #Næ í upplýsingar úr extra params dictionary hluta í simulator_input_his
         my_dict = json.loads(self.simulator_input_his['extra_params'][0])
         # convert the dictionary to a Pandas DataFrame
@@ -318,7 +325,7 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
         df['updated_current_inventory'] = eval(my_dict['extra_params'][0]['current_inventory'])[0][1]
 
         #Sameina datafream
-        sim_rio_items = sim_rio_items.reset_index()
+        sim_rio_item = sim_rio_item.reset_index()
         sim_rio_item_details = rio_item_details.reset_index()
 
         sim_rio_item_details = sim_rio_item_details.drop('purchasing_method', axis=1)
@@ -328,9 +335,9 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
         sim_rio_item_details = sim_rio_item_details.drop('del_time', axis=1)
 
 
-        result = pd.concat([df, sim_rio_items, sim_rio_item_details], axis=1)
+        result = pd.concat([df, sim_rio_item, sim_rio_item_details], axis=1)
         result['purch_sugg'] = self.sim_result.iloc[0,2]
-        result['optimal_stock'] = self.optimal_stock_level(self.sim_result, sim_rio_items)
+        result['optimal_stock'] = self.optimal_stock_level(self.sim_result, sim_rio_item)
         result['optimal_stock_value'] = result['optimal_stock']*result['unit_cost']
         result['current_stock_value'] = result['updated_current_inventory']*result['unit_cost']
         result['current_vs_optimal_diff_value'] = result['current_stock_value'] - result['optimal_stock_value']
@@ -358,6 +365,11 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
         return result
 
     def simulator_final_result(self):
+        """
+        Objective: Based on chosen service level, returns time series that minimizes stock level
+        (Service level: The likelyhood (given as %) that we are above nil stock at any point in time)
+        """
+        
         inp = self.simulator_input_his
         res = self.run_inventory_simulator(self.simulator_input_his)
         final_res = res.merge(inp[['day', 'forecast', 'actual_sale']], left_on='sim_date', right_on='day')
@@ -394,6 +406,8 @@ if __name__ == '__main__':
     print('-----------------------------------------------------------------------------------------------')
     print('-----------------------------------------------------------------------------------------------')
     print(a.sim_result)
+    print('-----------------------------------------------------------------------------------------------')
+    print('-----------------------------------------------------------------------------------------------')
     print(a.as_is_info.columns)
     my_dict = json.loads(a.simulator_input_his['extra_params'][0])
     # convert the dictionary to a Pandas DataFrame
