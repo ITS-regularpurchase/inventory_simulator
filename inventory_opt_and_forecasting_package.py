@@ -156,26 +156,42 @@ class get_raw_data():
 
 class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
     """
-    F
+    All necessary functions to run inventory simulation.
+    
+    Usage:
+        Initialize with all necessary information as input. Prepares data for simulation, and runs simulation.
+
+        self.sim_result -> results from simulation
+            result for each part number (item_id):
+             'item_id', 'inv', 'purchase_qty', 'deliveries', 'lost_sale', 'expired', 'sim_date', 'forecast', 'actual_sale'
+        
+        self.as_is_info -> all necessary data regarding purchasing suggestion
+            returns for each partnumber in input:
+             'pn', 'description', 'lead_time', 'order_freq', 'lead_forecast', 'buy_forecast', 'bakcorder', 'safety_stock', 'bypass_forecast',
+             'updated_current_inventory', 'del_time', 'buy_freq', 'purchasing_method',
+             'vendor_name', 'stock_units', 'inv_class_cd', 'service_level',
+             'min', 'max', 'comment', 'movement_last_year', 'usage_last_year', 'movement_two_year', 'usage_two_year',
+             'movement_three_year', 'usage_three_year', 'purch_sugg', 'optimal_stock', 'unit_cost', 'optimal_stock_value',
+             'current_stock_value', 'current_vs_optimal_diff_value', 'opt_stock_status', 'agg_movement_last_3_years'
     """
-    def __init__(self, sim_input_his: pd.DataFrame, sim_rio_items: pd.DataFrame, sim_rio_on_order: pd.DataFrame, rio_item_details: pd.DataFrame, periods: int, number_of_trials: int, serv_level: float) -> None:
+    def __init__(self, sim_input_his: pd.DataFrame, sim_rio_item: pd.DataFrame, sim_rio_on_order: pd.DataFrame, rio_item_details: pd.DataFrame, periods: int, number_of_trials: int, serv_level: float) -> None:
         #upphafsgildi úr montercarlo spá fyrir buy freq og lead time
-        self.histogram_lead = self.monte_forecast(sim_input_his[['actual_sale', 'day']], sim_rio_items.loc[:, 'del_time'].values[0], number_of_trials)
+        self.histogram_lead = self.monte_forecast(sim_input_his[['actual_sale', 'day']], sim_rio_item.loc[:, 'del_time'].values[0], number_of_trials)
         self.serv_level_value_lead = self.serv_lev_value(self.histogram_lead, serv_level)
         self.histo_with_cum_lead  = self.histogram_with_cum(self.histogram_lead, 20)
 
-        self.histogram_buy = self.monte_forecast(sim_input_his[['actual_sale', 'day']], sim_rio_items.loc[:, 'buy_freq'].values[0], number_of_trials)
+        self.histogram_buy = self.monte_forecast(sim_input_his[['actual_sale', 'day']], sim_rio_item.loc[:, 'buy_freq'].values[0], number_of_trials)
         self.serv_level_value_buy = self.serv_lev_value(self.histogram_buy, serv_level)
         self.histo_with_cum_buy = self.histogram_with_cum(self.histogram_buy, 20)
 
 
         #Input í simulator
-        self.simulator_input_his = self.step_5_crate_input_data_frame(sim_input_his, periods, sim_rio_items,
+        self.simulator_input_his = self.step_5_crate_input_data_frame(sim_input_his, periods, sim_rio_item,
                                                                       sim_rio_on_order, number_of_trials,
                                                                       serv_level)
         #Output úr simulator
         self.sim_result: pd.DataFrame = self.simulator_final_result()
-        self.as_is_info = self.data_collection_in_dataframe_for_constructor(sim_rio_items, rio_item_details)
+        self.as_is_info = self.data_collection_in_dataframe_for_constructor(sim_rio_item, rio_item_details)
 
 
     def calc_lead_and_buy_with_save(self,inv_sim_his, periods, number_of_trials, serv_level):
@@ -314,6 +330,8 @@ class inventory_simulator_with_input_prep(forecasts, sim.inventory_simulator):
 
     def data_collection_in_dataframe_for_constructor(self, sim_rio_item, rio_item_details) -> pd.DataFrame:
         """
+        Input:
+            sim_rio_item: Single 
         Returns:
             For partnumber (sim_rio_item), returns all relevant data
         """
@@ -405,7 +423,7 @@ if __name__ == '__main__':
 
     print('-----------------------------------------------------------------------------------------------')
     print('-----------------------------------------------------------------------------------------------')
-    print(a.sim_result)
+    print(a.sim_result.columns)
     print('-----------------------------------------------------------------------------------------------')
     print('-----------------------------------------------------------------------------------------------')
     print(a.as_is_info.columns)
