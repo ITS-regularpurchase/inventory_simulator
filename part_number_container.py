@@ -9,6 +9,30 @@ import streamlit as st
 
 class inv_opt_container(sim.inventory_simulator_with_input_prep, sim.get_raw_data):
     def __init__(self, pn_list):
+        """
+        Creates instance variables:
+            final_res: 
+                Purchasing suggestion for all provided part numbers (pn_list)
+            
+            container_as_is_info / as_is_container_for_grid: for each part number:
+                'pn', 'description', 'lead_time', 'order_freq', 'lead_forecast',
+                'buy_forecast', 'bakcorder', 'safety_stock', 'bypass_forecast',
+                'current_inventory', 'del_time', 'buy_freq', 'purchasing_method',
+                'vendor_name', 'stock_units', 'inv_class_cd', 'service_level', 'min',
+                'max', 'comment', 'movement_last_year', 'usage_last_year',
+                'movement_two_year', 'usage_two_year', 'movement_three_year',
+                'usage_three_year', 'purch_sugg', 'optimal_stock', 'unit_cost',
+                'optimal_stock_value', 'current_stock_value',
+                'current_vs_optimal_diff_value', 'opt_stock_status',
+                'agg_movement_last_3_years'
+                
+            overview_opt_plan (for all pn) / update_overview_opt_plan (takes in filtered list):
+                For each pn:
+                    stock value,
+                    total qty,
+                    qty of nil stock,
+                    nil stock % compared to all pn provided
+        """
         self.rio_histories = self.get_rio_histories()
         self.rio_items = self.get_rio_items()
         self.rio_item_details = self.get_rio_item_details()
@@ -141,15 +165,17 @@ if __name__ == '__main__':
 
     to_filter = data.rio_items['pn'].head(50)
 
-    alda = inv_opt_container(pn_list)
-
+    alda = inv_opt_container(pn_list.head(20))
+    
     print(alda.overview_opt_plan)
 
-    print(alda.update_overview_opt_plan(to_filter))
+    # print(alda.overview_opt_plan)
 
-    print(alda.container_as_is_info)
+    #print(alda.update_overview_opt_plan(to_filter))
 
-    alda.container_as_is_info.to_excel("as_is_info.xlsx")
+    # print(alda.container_as_is_info)
+
+    # alda.container_as_is_info.to_excel("as_is_info.xlsx")
    
 
 
