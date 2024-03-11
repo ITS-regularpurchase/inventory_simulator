@@ -90,8 +90,6 @@ if check_password():
 
         grid_return = AgGrid(filtered_grid,go, height=400, allow_unsafe_jscode=True)
 
-
-        grid_return = AgGrid(filtered_grid,go, height=450, allow_unsafe_jscode=True) 
         #grid_return = AgGrid(rio_items, go)
 
 
