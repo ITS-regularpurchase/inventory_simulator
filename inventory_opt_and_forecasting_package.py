@@ -420,7 +420,7 @@ if __name__ == '__main__':
     #print(sim_rio_items)
     #print(a.simulator_input_his[:1])
 
-
+    """
     print('-----------------------------------------------------------------------------------------------')
     print('-----------------------------------------------------------------------------------------------')
     print(a.sim_result.columns)
@@ -434,3 +434,6 @@ if __name__ == '__main__':
     print(sim_input_his.head(1))
     print("histogram lead\n\n\n\n")
     print(a.histogram_lead)
+    """
+    
+    print(a.sim_result)
